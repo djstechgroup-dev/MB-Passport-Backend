@@ -6,29 +6,25 @@ const UserScheme = mongoose.Schema({
     required: true,
     unique: true
   },
-  firstName: {
-    type: String,
-    required: true
-  },
-  lastName: {
+  name: {
     type: String,
     required: true
   },
   favouriteBusiness: {
-    type: String
+    type: String,
+    default: '',
   },
   offerRedeemed: {
-    type: String
+    type: String,
+    default: '',
   },
   savedDeals: {
-    type: String
+    type: String,
+    default: '',
   },
   savingsEarned: {
-    type: String
-  },
-  businessName: {
     type: String,
-    required: true
+    default: '',
   },
   password: {
     type: String,
@@ -40,4 +36,4 @@ const UserScheme = mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("user", UserScheme);
+module.exports = mongoose.model("mobile_user", UserScheme);

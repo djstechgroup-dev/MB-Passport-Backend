@@ -11,13 +11,17 @@ const app = express()
 const authRouter = require("./routes/authRoutes")
 
 
-mongoose
-    .connect(process.env.DATABASE_LOCAL, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('DB connected'))
-    .catch(err => {
-        console.log(err);
-    });
+const mongoString = process.env.DATABASE_CLOUD
 
+mongoose.connect(mongoString, {useNewUrlParser: true})
+    
+mongoose.connection.on("error", function(error) {
+      console.log(error)
+})
+    
+mongoose.connection.on("open", function() {
+      console.log("Connected to MongoDB database.")
+ })    
 app.use(morgan("dev"))
 
 app.use(bodyParser());
