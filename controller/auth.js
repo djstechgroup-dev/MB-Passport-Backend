@@ -1,7 +1,8 @@
 const User = require('../models/user')
 const MobileUser = require('../models/mobile_user')
 const jwt = require('jsonwebtoken')
-
+const { expressjwt: expressJwt } = require('express-jwt');
+const md5 = require('md5');
 exports.signup = (req, res) => {
     console.log("BODY",req.body)
     User.findOne({email: req.body.email}).exec((err, user) => {
@@ -39,8 +40,8 @@ exports.signupMobile = (req, res) => {
             })
         }
 
-        const {name, email, password} =  req.body
-
+        var {name, email, password} =  req.body
+        password = md5(password)
         let newUser = new MobileUser({name, email, password})
         newUser.save((err, success) => {
             if (err) {
@@ -90,7 +91,7 @@ exports.signinMobile = (req, res) => {
                 error: "User doesnot Exist"
             })
         }
-        if(user.password !== req.body.password){        
+        if(user.password !== md5(req.body.password)){        
             return res.status(400).json({
                 error: "Password doesn't Match"
         })
@@ -105,3 +106,7 @@ exports.signinMobile = (req, res) => {
         });
     })
 }
+
+exports.requireSignin = expressJwt({
+    secret: process.env.JWT_SECRET, algorithms: ["HS256"],// req.user
+});

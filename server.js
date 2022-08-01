@@ -9,6 +9,7 @@ require('dotenv').config();
 const app = express()
 
 const authRouter = require("./routes/authRoutes")
+const businessRoutes = require("./routes/businessRoutes")
 
 
 const mongoString = process.env.DATABASE_CLOUD
@@ -32,6 +33,7 @@ app.use(cookieParser())
 app.use(cors());
 
 app.use('/api', authRouter)
+app.use('/api', businessRoutes)
 
 
 const port = process.env.PORT || 8000;
