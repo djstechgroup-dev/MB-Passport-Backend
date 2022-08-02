@@ -78,8 +78,8 @@ exports.signin = (req, res) => {
         res.cookie('token', token, { expiresIn: '1d' });
         const { _id, name, email, role, contact} = user;
         return res.json({
-            token,
-            user: { _id, name, email, role, contact}
+            jwt: token,
+            message: { _id, name, email, role, contact}
         });
     })
 }

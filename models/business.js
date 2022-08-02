@@ -32,6 +32,10 @@ const businessSchema = mongoose.Schema({
     type: Number,
     default: 1
   },
+  webSiteURL: {
+    type: String,
+    default: "www.google.com"
+  },
   hourClose: {
     type: Number,
     default: 1
@@ -50,4 +54,4 @@ const businessSchema = mongoose.Schema({
   }
 });
 
-  module.exports = mongoose.model("business", businessSchema);
+module.exports = mongoose.model("business", businessSchema);

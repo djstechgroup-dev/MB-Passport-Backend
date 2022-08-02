@@ -9,6 +9,7 @@ exports.createBusiness = (req, res) => {
         description, 
         tagline, 
         hourOpen, 
+        webSiteURL,
         hourClose, 
         totalOffers, 
         totalUsed} =  req.body
@@ -20,6 +21,7 @@ exports.createBusiness = (req, res) => {
             description, 
             tagline, 
             hourOpen, 
+            webSiteURL,
             hourClose, 
             totalOffers, 
             totalUsed})
