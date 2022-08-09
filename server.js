@@ -1,42 +1,38 @@
+require('dotenv').config()
+const http = require('http')
 const express = require("express")
-const mongoose = require("mongoose")
 const morgan = require("morgan")
-const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
-require('dotenv').config();
+const appRoutes = require('./src/routes')
+const { connectDB } = require('./src/services/database.service')
 
-const app = express()
+async function startServer() {
 
-const authRouter = require("./routes/authRoutes")
-const businessRoutes = require("./routes/businessRoutes")
+      try {
+            const app = express()
+            const httpServer = http.createServer(app)
+            const appDomain = process.env?.APP_DOMAIN || 'localhost'
+            const port = process.env?.PORT || 8000
 
+            await connectDB()
+            
+            app.use(morgan('dev'))
+            app.use(express.json())
+            app.use(cookieParser())
+            app.use(cors())
+            app.use('/api', appRoutes)
+            
+            httpServer.listen(port, () => {
+                  console.log(`Server is running on http://${appDomain}:${port}`)
+            })           
+      } catch (error) {
+            console.log(error)
+      }
+}
 
-const mongoString = process.env.DATABASE_CLOUD
+startServer()
 
-mongoose.connect(mongoString, {useNewUrlParser: true})
     
-mongoose.connection.on("error", function(error) {
-      console.log(error)
-})
-    
-mongoose.connection.on("open", function() {
-      console.log("Connected to MongoDB database.")
- })    
-app.use(morgan("dev"))
+ 
 
-app.use(bodyParser());
-app.use(cookieParser())
-// if (process.env.NODE_ENV === 'development') {
-//     app.use(cors({ origin: `${process.env.CLIENT_URL}` }));
-// }
-app.use(cors());
-
-app.use('/api', authRouter)
-app.use('/api', businessRoutes)
-
-
-const port = process.env.PORT || 8000;
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});

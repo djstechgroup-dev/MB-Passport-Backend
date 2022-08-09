@@ -41,12 +41,17 @@ exports.createBusiness = (req, res) => {
 }
 
 exports.getBusiness = (req, res) => {
-    Business.find({}).exec((err, data) => {
-        if (err) {
-            return res.status(400).json({
-                error: errorHandler(err)
-            });
-        }
-        res.json(data);
-    });
-};
+    // Business.find({}).exec((err, data) => {
+    //     if (err) {
+    //         return res.status(400).json({
+    //             error: errorHandler(err)
+    //         });
+    //     }
+    //     res.json(data);
+    // });
+
+    res.json({
+        data: [],
+        status: 200
+    })
+}

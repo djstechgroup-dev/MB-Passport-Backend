@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
+const authenticated = require('./../middleware/isAuthenticated.middleware')
 
 const {createBusiness, getBusiness} = require("../controller/business")
-const {requireSignin} = require("../controller/auth")
 
 router.post('/create-business', createBusiness)
-router.get('/get-businesses', requireSignin, getBusiness)
+router.get('/all', authenticated, getBusiness)
 
 module.exports = router
