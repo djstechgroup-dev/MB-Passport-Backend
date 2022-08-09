@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs')
+const {getAuth} = require('firebase-admin/auth')
 const User = require('./../models/user')
 const admin = require('./../services/firebase.service')
 
@@ -17,7 +18,7 @@ exports.signup = async (req, res) => {
         const name = `${firstname} ${lastname}`
         const hash = bcrypt.hashSync(password,10)
 
-        const {uid} = await admin.auth().createUser({
+        const firebaseResponse = await admin.auth().createUser({
             email,
             password,
             emailVerified: false,
@@ -25,33 +26,38 @@ exports.signup = async (req, res) => {
             displayName: name
         })
 
+        let role = null
+
         //find the user in mongodb
-        const user = await User.findOne({user_id: uid})
+        const user = await User.findOne({user_id: firebaseResponse.uid})
 
         //if user not exist
         //create user in mongodb
         if(!user) {
             const newUser = await User.create({
-                user_id: uid,
+                user_id: firebaseResponse.uid,
                 email,
                 password: hash,
                 name,
                 businessName: business_name,
             })
 
-            console.log(newUser)
-
-            const results = await admin.auth().setCustomUserClaims(uid, {role: newUser.role})
-
-            res.json(results)
+            role = newUser.role
 
         } else {
-            //if user already register in mongodb
-            //return new token
-            const results = await admin.auth().setCustomUserClaims(uid, {role: user.role})
-
-            res.json(results)
+            role = user.role
         }
+
+        
+        await admin.auth().setCustomUserClaims(firebaseResponse.uid, {role})
+
+        const token = await getAuth().createCustomToken(firebaseResponse.uid)
+
+        res.json({
+            ...firebaseResponse,
+            token,
+            role
+        })
 
     } catch (error) {
         res.send(error)
@@ -60,7 +66,30 @@ exports.signup = async (req, res) => {
 }
 
 exports.signin = async (req, res) => {
-    res.send('sign in')
+
+    const {email, password} = req.body
+
+    try {
+        const user = await User.findOne({email})
+
+        if(!user) throw new Error('User not found')
+
+        const match = bcrypt.compareSync(password, user.password)
+
+        if(!match) throw new Error('Incorrect password')
+
+        const token = await getAuth().createCustomToken(user.uid)
+
+        res.json({
+            token
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(402).json({
+            error
+        })
+    }
 }
 
 // exports.signupMobile = (req, res) => {
