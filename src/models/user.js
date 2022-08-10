@@ -1,5 +1,4 @@
-
-
+const bcrypt = require('bcryptjs')
 const mongoose = require("mongoose");
 
 const UserScheme = mongoose.Schema({
@@ -13,9 +12,11 @@ const UserScheme = mongoose.Schema({
     required: true,
     unique: true
   },
-  name: {
-    type: String,
-    required: true
+  firstname: {
+    type: String
+  },
+  lastname: {
+    type: String
   },
   favouriteBusiness: {
     type: String
@@ -29,9 +30,8 @@ const UserScheme = mongoose.Schema({
   savingsEarned: {
     type: String
   },
-  businessName: {
-    type: String,
-    required: true
+  business_name: {
+    type: this.toString
   },
   password: String,
   role: {
@@ -43,6 +43,21 @@ const UserScheme = mongoose.Schema({
     default: () => Date.now()
   }
 })
+
+UserScheme.pre('save', function(next) {
+
+  // check if password is present and is modified.
+  if ( this.password && this.isModified('password') ) {
+
+    // call your hashPassword method here which will return the hashed password.
+    this.password = bcrypt.hashSync(this.password, 10);
+
+  }
+
+  // everything is done, so let's call the next callback.
+  next();
+
+});
 
 module.exports = mongoose.model("User", UserScheme)
 

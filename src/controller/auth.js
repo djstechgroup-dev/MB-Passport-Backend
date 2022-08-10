@@ -1,7 +1,8 @@
 const bcrypt = require('bcryptjs')
-const {getAuth} = require('firebase-admin/auth')
+const {getAuth, signInWithEmailAndPassword} = require('firebase-admin/auth')
 const User = require('./../models/user')
-const admin = require('./../services/firebase.service')
+const {createUser, createToken, setCustomData} = require('./../services/firebase.service')
+const {findOrCreate} = require('./../services/user.service')
 
 exports.signup = async (req, res) => {
 
@@ -14,49 +15,35 @@ exports.signup = async (req, res) => {
             password,
             business_name
         } = req.body
-    
-        const name = `${firstname} ${lastname}`
-        const hash = bcrypt.hashSync(password,10)
 
-        const firebaseResponse = await admin.auth().createUser({
+        const {uid} = await createUser({
             email,
             password,
-            emailVerified: false,
-            disabled: false,
-            displayName: name
+            name: `${firstname} ${lastname}`
         })
 
-        let role = null
+        const user = await findOrCreate(uid, {
+            firstname,
+            lastname,
+            email,
+            password,
+            business_name
+        })
 
-        //find the user in mongodb
-        const user = await User.findOne({user_id: firebaseResponse.uid})
+        const payload = {
+            role: user.role,
+            firstname,
+            lastname,
+            business_name
+         }
 
-        //if user not exist
-        //create user in mongodb
-        if(!user) {
-            const newUser = await User.create({
-                user_id: firebaseResponse.uid,
-                email,
-                password: hash,
-                name,
-                businessName: business_name,
-            })
+        await setCustomData(uid, payload)
 
-            role = newUser.role
-
-        } else {
-            role = user.role
-        }
-
-        
-        await admin.auth().setCustomUserClaims(firebaseResponse.uid, {role})
-
-        const token = await getAuth().createCustomToken(firebaseResponse.uid)
+        const token = await createToken(uid)
 
         res.json({
-            ...firebaseResponse,
             token,
-            role
+            data: payload
         })
 
     } catch (error) {
@@ -70,18 +57,29 @@ exports.signin = async (req, res) => {
     const {email, password} = req.body
 
     try {
-        const user = await User.findOne({email})
+        const firebaseUser = await getAuth().getUserByEmail(email)
 
-        if(!user) throw new Error('User not found')
+        const data = firebaseUser.customClaims;
 
-        const match = bcrypt.compareSync(password, user.password)
+        console.log(data)
 
-        if(!match) throw new Error('Incorrect password')
+        const user = await findOrCreate(firebaseUser.uid, {
+            firstname: data.firstname,
+            lastname: data.lastname,
+            email,
+            password,
+            business_name: data.business_name
+        })
 
-        const token = await getAuth().createCustomToken(user.uid)
+        const token = await createToken(firebaseUser.uid)
 
         res.json({
-            token
+            token,
+            data
+        })
+
+        res.json({
+            user
         })
 
     } catch (error) {
