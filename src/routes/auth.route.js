@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router()
 
-const {signup, signin, signupMobile, signinMobile} = require("../controller/auth")
+const {signup, signin, getAuthUser} = require("../controller/auth")
+const isAuthenticated = require('./../middleware/isAuthenticated.middleware')
 
 router.post('/signup', signup)
-// router.post('/mobile_signup', signupMobile)
-// router.post('/mobile_signin', signinMobile)
 router.post('/signin', signin)
+router.get('/user', isAuthenticated, getAuthUser)
 
 module.exports = router

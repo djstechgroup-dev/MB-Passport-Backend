@@ -12,6 +12,7 @@ exports.createUser = async payload => {
             email: payload.email,
             password: payload.password,
             displayName: payload.name,
+            photoURL: `https://www.gravatar.com/avatar?d=mp`,
             emailVerified: false,
             disabled: false
         })
@@ -30,9 +31,9 @@ exports.setCustomData = async (uid, payload) => {
     }
 }
 
-exports.createToken = async uid => {
+exports.createToken = async (uid, payload) => {
     try {
-        return  await getAuth().createCustomToken(uid)
+        return  await getAuth().createCustomToken(uid, payload)
     } catch (error) {
         throw error
     }

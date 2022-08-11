@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs')
-const {getAuth, signInWithEmailAndPassword} = require('firebase-admin/auth')
+const {getAuth} = require('firebase-admin/auth')
 const User = require('./../models/user')
 const {createUser, createToken, setCustomData} = require('./../services/firebase.service')
 const {findOrCreate} = require('./../services/user.service')
@@ -16,34 +16,32 @@ exports.signup = async (req, res) => {
             business_name
         } = req.body
 
-        const {uid} = await createUser({
+        const {uid, displayName, email: fbEmail, photoURL} = await createUser({
             email,
             password,
             name: `${firstname} ${lastname}`
         })
 
         const user = await findOrCreate(uid, {
-            firstname,
-            lastname,
-            email,
-            password,
+            name: displayName,
+            email: fbEmail,
+            photo_url: photoURL,
             business_name
         })
 
         const payload = {
-            role: user.role,
-            firstname,
-            lastname,
-            business_name
+            user_id: uid,
+            email: fbEmail,
+            role: user.role
          }
 
         await setCustomData(uid, payload)
 
-        const token = await createToken(uid)
+        const token = await createToken(uid, payload)
 
         res.json({
             token,
-            data: payload
+            user
         })
 
     } catch (error) {
@@ -54,34 +52,30 @@ exports.signup = async (req, res) => {
 
 exports.signin = async (req, res) => {
 
-    const {email, password} = req.body
+    const {email} = req.body
 
     try {
-        const firebaseUser = await getAuth().getUserByEmail(email)
+        const {uid, email: fbEmail, displayName, photoURL} = await getAuth().getUserByEmail(email)
 
-        const data = firebaseUser.customClaims;
-
-        const user = await findOrCreate(firebaseUser.uid, {
-            firstname: data.firstname,
-            lastname: data.lastname,
-            email,
-            password,
-            business_name: data.business_name
+        const user = await findOrCreate(uid, {
+            name: displayName,
+            email: fbEmail,
+            photo_url: photoURL
         })
 
-        const token = await createToken(firebaseUser.uid)
+        console.log(user)
 
-        res.cookie('session', token, {
-            maxAge: 60 * 60 * 24 * 7 * 1000,
-            domain: 'http://localhost:8080',
-            path: '/',
-            httpOnly: true, 
-            secure: true
-        })
+        const payload = {
+            user_id: uid,
+            email: fbEmail,
+            role: user.role
+         }
+
+        const token = await createToken(uid, payload)
 
         res.json({
             token,
-            data
+            user
         })
 
     } catch (error) {
@@ -92,58 +86,22 @@ exports.signin = async (req, res) => {
     }
 }
 
-// exports.signupMobile = (req, res) => {
-//     console.log("BODY",req.body)
-//     MobileUser.findOne({email: req.body.email}).exec((err, user) => {
-//         if (user) {
-//             return res.status(400).send({
-//                 error: 'Email is taken'
-//             })
-//         }
 
-//         let {name, email, password} =  req.body
-//         password = md5(password)
-//         let newUser = new MobileUser({name, email, password})
-//         newUser.save((err, success) => {
-//             if (err) {
-//                 return res.status(400).json({
-//                     error: err
-//                 })
-//             }
-//             console.log(success)
-//             const token = jwt.sign({ _id: success._id }, process.env.JWT_SECRET);
-//             res.send({
-//                 message: success,
-//                 jwt: token
-//             })
-//         })
-//     })
-// }
+exports.getAuthUser = async (req, res) => {
+    
 
-// exports.signinMobile = (req, res) => {
-//     // console.log(req.body)
-//     MobileUser.findOne({email: req.body.email}).exec((err, user)=>{
-//         if(err || !user) {
-//             return res.status(400).json({
-//                 error: "User doesnot Exist"
-//             })
-//         }
-//         if(user.password !== md5(req.body.password)){        
-//             return res.status(400).json({
-//                 error: "Password doesn't Match"
-//         })
-//         }
-//         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    try {
 
-//         res.cookie('token', token, { expiresIn: '1d' });
-//         const { _id, name, email, favouriteBusiness, offerRedeemed, savedDeals, savingsEarned} = user;
-//         return res.json({
-//             token,
-//             user: { _id, name, email, favouriteBusiness, offerRedeemed, savedDeals, savingsEarned}
-//         });
-//     })
-// }
+        const user = req.user
+        
+        res.json({
+            user
+        })
 
-// exports.requireSignin = expressJwt({
-//     secret: process.env.JWT_SECRET, algorithms: ["HS256"],// req.user
-// });
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
+    
+}

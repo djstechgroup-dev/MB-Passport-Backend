@@ -12,12 +12,10 @@ const UserScheme = mongoose.Schema({
     required: true,
     unique: true
   },
-  firstname: {
+  name: {
     type: String
   },
-  lastname: {
-    type: String
-  },
+  photo_url: String,
   favouriteBusiness: {
     type: String
   },
@@ -33,7 +31,6 @@ const UserScheme = mongoose.Schema({
   business_name: {
     type: String
   },
-  password: String,
   role: {
     type: Number,
     default: 1

@@ -20,7 +20,9 @@ async function startServer() {
             app.use(morgan('dev'))
             app.use(express.json())
             app.use(cookieParser())
-            app.use(cors())
+            app.use(cors({
+                  origin: 'http://localhost:8080'
+            }))
             app.use('/api', appRoutes)
             
             httpServer.listen(port, () => {

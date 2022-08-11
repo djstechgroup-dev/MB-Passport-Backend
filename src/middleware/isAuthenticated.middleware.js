@@ -1,5 +1,5 @@
 const {getAuth} = require('firebase-admin/auth')
-const admin = require('./../services/firebase.service')
+const User = require('./../models/user')
 
 const authenticated = async (req, res, next) => {
     try {
@@ -11,9 +11,13 @@ const authenticated = async (req, res, next) => {
 
         if(!token) throw new Error('Unauthorized')
 
-        const decoded = await getAuth().verifyIdToken(token)
+        const {user_id} = await getAuth().verifyIdToken(token)
 
-        console.log(decoded)
+        const user = await User.findOne({user_id})
+
+        if(!user) req.user = null
+
+        if(user) req.user = user
 
         next()
     } catch (error) {
