@@ -31,7 +31,7 @@ const UserScheme = mongoose.Schema({
     type: String
   },
   business_name: {
-    type: this.toString
+    type: String
   },
   password: String,
   role: {

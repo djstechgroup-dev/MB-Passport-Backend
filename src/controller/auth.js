@@ -61,8 +61,6 @@ exports.signin = async (req, res) => {
 
         const data = firebaseUser.customClaims;
 
-        console.log(data)
-
         const user = await findOrCreate(firebaseUser.uid, {
             firstname: data.firstname,
             lastname: data.lastname,
@@ -73,13 +71,17 @@ exports.signin = async (req, res) => {
 
         const token = await createToken(firebaseUser.uid)
 
-        res.json({
-            token,
-            data
+        res.cookie('session', token, {
+            maxAge: 60 * 60 * 24 * 7 * 1000,
+            domain: 'http://localhost:8080',
+            path: '/',
+            httpOnly: true, 
+            secure: true
         })
 
         res.json({
-            user
+            token,
+            data
         })
 
     } catch (error) {
