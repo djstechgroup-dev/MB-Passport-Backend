@@ -1,8 +1,9 @@
 const Business = require('../models/business')
-const jwt = require('jsonwebtoken');
 
-exports.createBusiness = (req, res) => {
-    const {businessName, 
+exports.create = async (req, res) => {
+
+    const {
+        businessName, 
         imageuRL, 
         category, 
         address, 
@@ -14,44 +15,86 @@ exports.createBusiness = (req, res) => {
         totalOffers, 
         totalUsed} =  req.body
 
-        let newBusiness = new Business({businessName, 
-            imageuRL, 
-            category, 
-            address, 
-            description, 
-            tagline, 
-            hourOpen, 
-            webSiteURL,
-            hourClose, 
-            totalOffers, 
-            totalUsed})
-        
-        newBusiness.save((err, success) => {
-            if (err) {
-                return res.status(400).json({
-                    error: err
-                })
-            }
-            console.log(success)
-            res.send({
-                message: success
+        try {
+            const newBusiness = new Business({
+                businessName, 
+                imageuRL, 
+                category, 
+                address, 
+                description, 
+                tagline, 
+                hourOpen, 
+                webSiteURL,
+                hourClose, 
+                totalOffers, 
+                totalUsed
             })
-        })
+            
+            await newBusiness.save()
+            
+            res.send({
+                data: newBusiness
+            })   
+
+        } catch (error) {
+            res.status(500).json({
+                error
+            })
+        }
 
 }
 
-exports.getBusiness = (req, res) => {
-    // Business.find({}).exec((err, data) => {
-    //     if (err) {
-    //         return res.status(400).json({
-    //             error: errorHandler(err)
-    //         });
-    //     }
-    //     res.json(data);
-    // });
-
+exports.getAll = async (req, res) => {
+   try {
+    const data = await Business.find()
     res.json({
-        data: [],
-        status: 200
+        data
     })
+   } catch (error) {
+    res.status(500).json({
+        error
+    })
+   }
+}
+
+exports.getById = async (req, res) => {
+
+    const id = req.params.id
+
+    try {
+        const data = await Business.findById(id)
+
+        res.json({
+            data
+        })
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
+}
+
+exports.updateBusiness = async (req, res) => {
+
+    const id = req.params.id
+    const payload = req.body
+
+    try {
+
+        const data = await Business.updateOne({ _id: id }, { $set: payload })
+
+        res.json({
+            success: true,
+            data
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
+}
+
+exports.deleteBusiness = async (req, res) => {
+
 }

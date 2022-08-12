@@ -10,6 +10,7 @@ const UserScheme = mongoose.Schema({
     type: String,
     required: true
   },
+  photoURL: String,
   favouriteBusiness: {
     type: String,
     default: '',
@@ -26,14 +27,10 @@ const UserScheme = mongoose.Schema({
     type: String,
     default: '',
   },
-  password: {
-    type: String,
-    required: true
-  },
   date: {
     type: Date,
-    default: Date.now
+    default: () => Date.now()
   }
 });
 
-module.exports = mongoose.model("mobile_user", UserScheme);
+module.exports = mongoose.model("MobileUser", UserScheme);

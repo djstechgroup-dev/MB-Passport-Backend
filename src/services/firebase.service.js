@@ -31,9 +31,9 @@ exports.setCustomData = async (uid, payload) => {
     }
 }
 
-exports.createToken = async (uid, payload) => {
+exports.createToken = async (uid) => {
     try {
-        return  await getAuth().createCustomToken(uid, payload)
+        return  await getAuth().createCustomToken(uid)
     } catch (error) {
         throw error
     }

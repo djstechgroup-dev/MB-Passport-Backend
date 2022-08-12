@@ -6,14 +6,14 @@ const {
     create, 
     getAll, 
     getById, 
-    updateBusiness
-} = require("../controller/business")
+    updateDeal
+} = require("../controller/deals")
 
 router.use(isAuthenticated)
 
 router.post('/new', create)
 router.get('/all', getAll)
 router.get('/get/:id', getById)
-router.patch('/', updateBusiness)
+router.patch('/', updateDeal)
 
 module.exports = router

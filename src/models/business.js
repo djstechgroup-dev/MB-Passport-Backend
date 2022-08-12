@@ -12,9 +12,8 @@ const businessSchema = mongoose.Schema({
     required: true
   },
   category: {
-    type: String,
-    default: 'category',
-    required: true
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'categories'
   },
   address: {
     type: String,
@@ -48,10 +47,10 @@ const businessSchema = mongoose.Schema({
     type: Number,
     default: 1
   },
-  date: {
+  date_created: {
     type: Date,
-    default: Date.now
+    default: () => Date.now()
   }
 });
 
-module.exports = mongoose.model("business", businessSchema);
+module.exports = mongoose.model("Business", businessSchema);
