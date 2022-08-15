@@ -1,8 +1,9 @@
-const bcrypt = require('bcryptjs')
 const {getAuth} = require('firebase-admin/auth')
 const User = require('./../models/user')
-const {createUser, createToken, setCustomData} = require('./../services/firebase.service')
+const {createUser} = require('./../services/firebase.service')
 const {findOrCreate} = require('./../services/user.service')
+const {signAccessToken, signRefreshToken, verifyRefreshToken} = require('./../services/jwt.service')
+const { sendCookie } = require('../utils/responseCookie')
 
 exports.signup = async (req, res) => {
 
@@ -29,18 +30,13 @@ exports.signup = async (req, res) => {
             business_name
         })
 
-        // const payload = {
-        //     user_id: uid,
-        //     email: fbEmail,
-        //     role: user.role
-        //  }
+        const accessToken = signAccessToken({uid})
+        const refreshToken = signRefreshToken({uid})
 
-        // await setCustomData(uid, payload)
-
-        // const token = await createToken(uid, payload)
+        sendCookie(res, refreshToken)
 
         res.json({
-            //token,
+            token: accessToken,
             user
         })
 
@@ -54,6 +50,8 @@ exports.signin = async (req, res) => {
 
     const {email} = req.body
 
+    console.log(req.body)
+
     try {
         const {uid, email: fbEmail, displayName, photoURL} = await getAuth().getUserByEmail(email)
 
@@ -63,16 +61,13 @@ exports.signin = async (req, res) => {
             photo_url: photoURL
         })
 
-        // const payload = {
-        //     user_id: uid,
-        //     email: fbEmail,
-        //     role: user.role
-        //  }
+        const accessToken = signAccessToken({uid})
+        const refreshToken = signRefreshToken({uid})
 
-        // const token = await createToken(uid)
+        sendCookie(res, refreshToken)
 
         res.json({
-            //token,
+            token: accessToken,
             user
         })
 
@@ -98,16 +93,10 @@ exports.signInMobile = async (req, res) => {
             role: 2
         })
 
-        // const payload = {
-        //     user_id: uid,
-        //     email: fbEmail,
-        //     role: user.role
-        //  }
-
-        // const token = await createToken(uid, payload)
+        const token = signRefreshToken({uid})
 
         res.json({
-            //token,
+            token,
             user
         })
 
@@ -122,12 +111,40 @@ exports.signInMobile = async (req, res) => {
 exports.getAuthUser = async (req, res) => {
     try {
         const user = req.user
+        const token = signAccessToken({uid: user.user_id})
         res.json({
+            token,
             user
         })
     } catch (error) {
-        res.status(500).json({
-            error
+        res.status(401).json({
+            error: error.message
+        })
+    }
+}
+
+exports.refreshToken = (req, res) => {
+
+    const {mbrtoken} = req.cookies
+
+    try {
+        if(!mbrtoken) throw new Error
+
+        const decoded = verifyRefreshToken(mbrtoken)
+
+        const user = User.findOne({user_id: decoded.uid})
+
+        if(!user) throw new Error
+
+        const newToken = signAccessToken({uid: user.user_id})
+
+        console.log(newToken)
+
+        res.json({token: newToken})
+    } catch (error) {
+        console.log(error)
+        res.status(401).json({
+            error: 'Unauthenticated'
         })
     }
 }

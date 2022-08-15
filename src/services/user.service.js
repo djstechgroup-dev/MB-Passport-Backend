@@ -10,12 +10,11 @@ exports.findOrCreate = async (uid, payload) => {
         const existUser = await User.findOne({user_id: uid})
 
         if(!existUser) {
-            const newUser = new User({
-                ...payload,
-                user_id: uid,
-            })
 
-            let user = await newUser.save()
+            const user = await User.create({
+                ...payload,
+                user_id: uid
+            })
 
             return user
         }
