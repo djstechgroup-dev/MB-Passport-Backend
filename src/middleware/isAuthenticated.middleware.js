@@ -12,15 +12,15 @@ const authenticated = async (req, res, next) => {
 
         const user = await User.findOne({user_id: decoded.uid})
 
-        if(!user) req.user = null
+        if(!user) throw new Error('Unauthorized')
 
         if(user) req.user = user
 
         next()
     } catch (error) {
         res.status(401).json({
-            message: error.message,
-            status: 401
+            user: null,
+            token: null
         })
     }
 }

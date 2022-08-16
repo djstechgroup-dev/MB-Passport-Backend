@@ -8,12 +8,13 @@ const businessSchema = mongoose.Schema({
   },
   imageURL: {
     type: String,
-    default: 'image url',
+    default: 'http://imageUrl.com',
     required: true
   },
   category: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: 'categories'
+    // type: mongoose.SchemaTypes.ObjectId,
+    // ref: 'categories'
+    type: String
   },
   address: {
     type: String,
@@ -23,29 +24,23 @@ const businessSchema = mongoose.Schema({
     type: String,
     default: 'description'
   },
-  tagline: {
+  openingTime: {
+    type: Object,
+    default: () => ({
+      hours: new Date().getHours(),
+      minutes: new Date().getMinutes()
+    })
+  },
+  closingTime: {
+    type: Object,
+    default: () => ({
+      hours: new Date().getHours(),
+      minutes: new Date().getMinutes()
+    })
+  },
+  webSiteUrl: {
     type: String,
-    default: 'tagline'
-  },
-  hourOpen: {
-    type: Number,
-    default: 1
-  },
-  webSiteURL: {
-    type: String,
-    default: "www.google.com"
-  },
-  hourClose: {
-    type: Number,
-    default: 1
-  },
-  totalOffers: {
-    type: Number,
-    default: 1
-  },
-  totalUsed: {
-    type: Number,
-    default: 1
+    default: "localhost"
   },
   date_created: {
     type: Date,

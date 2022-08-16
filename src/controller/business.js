@@ -3,34 +3,25 @@ const Business = require('../models/business')
 exports.create = async (req, res) => {
 
     const {
-        businessName, 
-        imageuRL, 
+        businessName,
         category, 
         address, 
         description, 
-        tagline, 
-        hourOpen, 
-        webSiteURL,
-        hourClose, 
-        totalOffers, 
-        totalUsed} =  req.body
+        openingTime,
+        closingTime,
+        webSiteUrl
+    } =  req.body
 
         try {
-            const newBusiness = new Business({
+            const newBusiness = Business.create({
                 businessName, 
-                imageuRL, 
                 category, 
                 address, 
-                description, 
-                tagline, 
-                hourOpen, 
-                webSiteURL,
-                hourClose, 
-                totalOffers, 
-                totalUsed
+                description,
+                openingTime, 
+                closingTime,
+                webSiteUrl
             })
-            
-            await newBusiness.save()
             
             res.send({
                 data: newBusiness

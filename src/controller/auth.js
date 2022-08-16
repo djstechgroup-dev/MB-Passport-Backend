@@ -3,7 +3,7 @@ const User = require('./../models/user')
 const {createUser} = require('./../services/firebase.service')
 const {findOrCreate} = require('./../services/user.service')
 const {signAccessToken, signRefreshToken, verifyRefreshToken} = require('./../services/jwt.service')
-const { sendCookie } = require('../utils/responseCookie')
+const { sendCookie, deleteCookie } = require('../utils/responseCookie')
 
 exports.signup = async (req, res) => {
 
@@ -108,6 +108,14 @@ exports.signInMobile = async (req, res) => {
     }
 }
 
+exports.signOut = (req, res) => {
+    deleteCookie(res)
+
+    res.json({
+        success: true
+    })
+}
+
 exports.getAuthUser = async (req, res) => {
     try {
         const user = req.user
@@ -137,8 +145,6 @@ exports.refreshToken = (req, res) => {
         if(!user) throw new Error
 
         const newToken = signAccessToken({uid: user.user_id})
-
-        console.log(newToken)
 
         res.json({token: newToken})
     } catch (error) {
