@@ -31,6 +31,7 @@ const UserScheme = mongoose.Schema({
   business_name: {
     type: String
   },
+  businesses: [{type: mongoose.Types.ObjectId, ref: 'Business'}],
   role: {
     type: Number,
     default: 1

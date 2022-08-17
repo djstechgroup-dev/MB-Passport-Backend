@@ -12,6 +12,8 @@ exports.create = async (req, res) => {
         webSiteUrl
     } =  req.body
 
+        const user = req.user
+
         try {
             const newBusiness = Business.create({
                 businessName, 
@@ -20,7 +22,8 @@ exports.create = async (req, res) => {
                 description,
                 openingTime, 
                 closingTime,
-                webSiteUrl
+                webSiteUrl,
+                owner: user._id
             })
             
             res.send({

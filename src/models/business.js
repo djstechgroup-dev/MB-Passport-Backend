@@ -42,6 +42,16 @@ const businessSchema = mongoose.Schema({
     type: String,
     default: "localhost"
   },
+  owner: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User'
+  },
+  locations: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Location'
+    }
+  ],
   date_created: {
     type: Date,
     default: () => Date.now()
