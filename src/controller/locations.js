@@ -1,7 +1,7 @@
 const Location = require('../models/location')
 const Business = require('../models/business')
 
-exports.create = async (req, res) => {
+exports.addLocation = async (req, res) => {
 
     const {
         businessId,
