@@ -2,11 +2,10 @@ const Business = require("../models/business")
 
 exports.myBusiness = async (req, res) => {
    try {
-
     const user = req.user
-    const data = await Business.find({owner: user._id})
+    const business = await Business.find({owner: user._id}).populate('locations')
     res.json({
-        data
+        business
     })
    } catch (error) {
     res.status(500).json({
@@ -15,3 +14,17 @@ exports.myBusiness = async (req, res) => {
    }
 }
 
+
+exports.myBusinessById = async (req, res) => {
+    try {
+     const user = req.user
+     const business = await Business.find({owner: user._id})
+     res.json({
+         business
+     })
+    } catch (error) {
+     res.status(500).json({
+         error
+     })
+    }
+ }

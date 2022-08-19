@@ -56,10 +56,10 @@ exports.getById = async (req, res) => {
     const id = req.params.id
 
     try {
-        const data = await Business.findById(id)
+        const business = await Business.findById(id)
 
         res.json({
-            data
+            business
         })
     } catch (error) {
         res.status(500).json({

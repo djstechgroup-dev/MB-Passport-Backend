@@ -1,14 +1,15 @@
-const {getAuth} = require('firebase-admin/auth')
-const { verifyRefreshToken } = require('../services/jwt.service')
+const {  verifyAccessToken } = require('../services/jwt.service')
 const User = require('./../models/user')
 
 const authenticated = async (req, res, next) => {
     try {
-        const {mbrtoken} = req.cookies
+        const authorization = req.headers.authorization
 
-        if(!mbrtoken) throw new Error('Unauthorized')
+        if(!authorization) throw new Error('Unauthorized')
 
-       const decoded = verifyRefreshToken(mbrtoken)
+        const accessToken = authorization.split(' ')[1]
+
+        const decoded = verifyAccessToken(accessToken)
 
         const user = await User.findOne({user_id: decoded.uid})
 

@@ -6,9 +6,7 @@ const {signAccessToken, signRefreshToken, verifyRefreshToken} = require('./../se
 const { sendCookie, deleteCookie } = require('../utils/responseCookie')
 
 exports.signup = async (req, res) => {
-
     try {
-
         const {
             firstname,
             lastname,
@@ -23,7 +21,7 @@ exports.signup = async (req, res) => {
             name: `${firstname} ${lastname}`
         })
 
-        const user = await findOrCreate(uid, {
+        await findOrCreate(uid, {
             name: displayName,
             email: fbEmail,
             photo_url: photoURL,
@@ -36,8 +34,7 @@ exports.signup = async (req, res) => {
         sendCookie(res, refreshToken)
 
         res.json({
-            token: accessToken,
-            user
+            token: accessToken
         })
 
     } catch (error) {
@@ -55,7 +52,7 @@ exports.signin = async (req, res) => {
     try {
         const {uid, email: fbEmail, displayName, photoURL} = await getAuth().getUserByEmail(email)
 
-        const user = await findOrCreate(uid, {
+        await findOrCreate(uid, {
             name: displayName,
             email: fbEmail,
             photo_url: photoURL
@@ -67,12 +64,10 @@ exports.signin = async (req, res) => {
         sendCookie(res, refreshToken)
 
         res.json({
-            token: accessToken,
-            user
+            token: accessToken
         })
 
     } catch (error) {
-        console.log(error)
         res.status(402).json({
             error
         })
@@ -86,7 +81,7 @@ exports.signInMobile = async (req, res) => {
     try {
         const {uid, email: fbEmail, displayName, photoURL} = await getAuth().getUserByEmail(email)
 
-        const user = await findOrCreate(uid, {
+        await findOrCreate(uid, {
             name: displayName,
             email: fbEmail,
             photo_url: photoURL,
@@ -96,12 +91,10 @@ exports.signInMobile = async (req, res) => {
         const token = signRefreshToken({uid})
 
         res.json({
-            token,
-            user
+            token
         })
 
     } catch (error) {
-        console.log(error)
         res.status(402).json({
             error
         })
@@ -131,7 +124,7 @@ exports.getAuthUser = async (req, res) => {
     }
 }
 
-exports.refreshToken = (req, res) => {
+exports.refreshToken = async (req, res) => {
 
     const {mbrtoken} = req.cookies
 
@@ -140,7 +133,7 @@ exports.refreshToken = (req, res) => {
 
         const decoded = verifyRefreshToken(mbrtoken)
 
-        const user = User.findOne({user_id: decoded.uid})
+        const user = await User.findOne({user_id: decoded.uid})
 
         if(!user) throw new Error
 

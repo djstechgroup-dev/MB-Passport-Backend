@@ -6,7 +6,10 @@ const {
     myBusiness
 } = require("../controller/merchant")
 
+const {getById} = require('./../controller/business')
+
 router.use(isAuthenticated)
 router.get('/my-business', myBusiness)
+router.get('/my-business/:id', getById)
 
 module.exports = router
