@@ -1,7 +1,8 @@
+const {getAuth} = require('firebase-admin/auth')
 const {  verifyAccessToken } = require('../services/jwt.service')
 const User = require('./../models/user')
 
-const authenticated = async (req, res, next) => {
+exports.isAuthenticated = async (req, res, next) => {
     try {
         const authorization = req.headers.authorization
 
@@ -26,4 +27,27 @@ const authenticated = async (req, res, next) => {
     }
 }
 
-module.exports = authenticated
+exports.firebaseAuth = async (req, res, next) => {
+
+    const authorization = req.headers.authorization
+
+    if(!authorization) throw new Error('Unauthorized')
+
+    const token = authorization.split(' ')[1]
+
+    console.log(token)
+
+    try {
+        const decoded = await getAuth().verifyIdToken(token)
+
+        console.log(decoded.claims)
+
+        next()
+    } catch (error) {
+        res.status(401).json({
+            error,
+            user: null
+        })
+    }
+
+}

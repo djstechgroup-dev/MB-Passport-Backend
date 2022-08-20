@@ -1,6 +1,6 @@
 const {getAuth} = require('firebase-admin/auth')
 const User = require('./../models/user')
-const {createUser} = require('./../services/firebase.service')
+const {createUser, setCustomData} = require('./../services/firebase.service')
 const {findOrCreate} = require('./../services/user.service')
 const {signAccessToken, signRefreshToken, verifyRefreshToken} = require('./../services/jwt.service')
 const { sendCookie, deleteCookie } = require('../utils/responseCookie')
@@ -47,28 +47,30 @@ exports.signin = async (req, res) => {
 
     const {email} = req.body
 
-    console.log(req.body)
-
     try {
-        const {uid, email: fbEmail, displayName, photoURL} = await getAuth().getUserByEmail(email)
+        const response = await getAuth().getUserByEmail(email)
 
-        await findOrCreate(uid, {
-            name: displayName,
-            email: fbEmail,
-            photo_url: photoURL
+        const user = await findOrCreate(response.uid, {
+            name: response.displayName,
+            email: response.email,
+            photo_url: response.photoURL
         })
 
-        const accessToken = signAccessToken({uid})
-        const refreshToken = signRefreshToken({uid})
+        
 
-        sendCookie(res, refreshToken)
+        await getAuth().setCustomUserClaims(response.uid, {user_role: user.role})
+        // const accessToken = signAccessToken({uid})
+        // const refreshToken = signRefreshToken({uid})
+
+        // sendCookie(res, refreshToken)
 
         res.json({
-            token: accessToken
+            data: response
         })
 
     } catch (error) {
-        res.status(402).json({
+        console.log(error)
+        res.status(401).json({
             error
         })
     }

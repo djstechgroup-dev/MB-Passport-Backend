@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const isAuthenticated = require('./../middleware/isAuthenticated.middleware')
+const {isAuthenticated} = require('./../middleware/isAuthenticated.middleware')
 
 const {
     create, 
