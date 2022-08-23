@@ -29,21 +29,26 @@ exports.isAuthenticated = async (req, res, next) => {
 
 exports.firebaseAuth = async (req, res, next) => {
 
-    const authorization = req.headers.authorization
-
-    if(!authorization) throw new Error('Unauthorized')
-
-    const token = authorization.split(' ')[1]
-
-    console.log(token)
-
     try {
-        const decoded = await getAuth().verifyIdToken(token)
 
-        console.log(decoded.claims)
+        const authorization = req.headers.authorization
+
+        if(!authorization) throw new Error('Unauthorized')
+
+        const token = authorization.split(' ')[1]
+
+        const {uid, email} = await getAuth().verifyIdToken(token)
+
+        const user = await User.findOne({user_id: uid, email})
+
+        if(!user) throw new Error('Unauthorized')
+
+        req.user = user
 
         next()
+
     } catch (error) {
+        console.log(error)
         res.status(401).json({
             error,
             user: null

@@ -56,16 +56,15 @@ exports.signin = async (req, res) => {
             photo_url: response.photoURL
         })
 
-        
-
-        await getAuth().setCustomUserClaims(response.uid, {user_role: user.role})
+        //await getAuth().setCustomUserClaims(response.uid, {user_role: user.role})
         // const accessToken = signAccessToken({uid})
         // const refreshToken = signRefreshToken({uid})
 
         // sendCookie(res, refreshToken)
 
         res.json({
-            data: response
+            firebase: response,
+            user
         })
 
     } catch (error) {
@@ -114,9 +113,7 @@ exports.signOut = (req, res) => {
 exports.getAuthUser = async (req, res) => {
     try {
         const user = req.user
-        const token = signAccessToken({uid: user.user_id})
         res.json({
-            token,
             user
         })
     } catch (error) {
