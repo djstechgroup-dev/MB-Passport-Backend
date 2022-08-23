@@ -37,13 +37,13 @@ exports.firebaseAuth = async (req, res, next) => {
 
         const token = authorization.split(' ')[1]
 
-        const {uid, email} = await getAuth().verifyIdToken(token)
+        const decoded = await getAuth().verifyIdToken(token)
 
-        const user = await User.findOne({user_id: uid, email})
+        //const user = await User.findOne({user_id: uid, email})
 
-        if(!user) throw new Error('Unauthorized')
+        if(!decoded) throw new Error('Unauthorized')
 
-        req.user = user
+        req.user = decoded
 
         next()
 

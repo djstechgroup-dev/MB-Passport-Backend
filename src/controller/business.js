@@ -1,4 +1,5 @@
 const Business = require('../models/business')
+const User = require('./../models/user')
 
 exports.create = async (req, res) => {
 
@@ -12,7 +13,9 @@ exports.create = async (req, res) => {
         webSiteUrl
     } =  req.body
 
-        const user = req.user
+        const {uid} = req.user
+
+        const user = await User.findOne({user_id: uid})
 
         try {
             const newBusiness = Business.create({

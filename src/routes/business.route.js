@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {isAuthenticated} = require('./../middleware/isAuthenticated.middleware')
+const {isAuthenticated, firebaseAuth} = require('./../middleware/isAuthenticated.middleware')
 
 const {
     create, 
@@ -13,7 +13,7 @@ const {
     addLocation
 } = require("../controller/locations")
 
-router.use(isAuthenticated)
+router.use(firebaseAuth)
 
 router.post('/new', create)
 router.post('/add-location', addLocation)

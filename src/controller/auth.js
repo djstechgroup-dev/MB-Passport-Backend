@@ -103,7 +103,9 @@ exports.signOut = (req, res) => {
 
 exports.getAuthUser = async (req, res) => {
     try {
-        const user = req.user
+        const {uid, email} = req.user
+
+        const user = await User.findOne({user_id: uid, email})
         res.json({
             user
         })
