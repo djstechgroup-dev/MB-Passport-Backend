@@ -11,7 +11,7 @@ exports.createUser = async payload => {
         const user = await firebase.auth().createUser({
             email: payload.email,
             password: payload.password,
-            displayName: payload.name,
+            displayName: payload.firstname + ' ' + payload.lastname,
             photoURL: `https://www.gravatar.com/avatar?d=mp`,
             emailVerified: false,
             disabled: false

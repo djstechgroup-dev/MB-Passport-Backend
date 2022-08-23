@@ -1,9 +1,9 @@
 const {getAuth} = require('firebase-admin/auth')
 const User = require('./../models/user')
-const {createUser, setCustomData} = require('./../services/firebase.service')
+const {createUser} = require('./../services/firebase.service')
 const {findOrCreate} = require('./../services/user.service')
 const {signAccessToken, signRefreshToken, verifyRefreshToken} = require('./../services/jwt.service')
-const { sendCookie, deleteCookie } = require('../utils/responseCookie')
+const { deleteCookie } = require('../utils/responseCookie')
 
 exports.signup = async (req, res) => {
     try {
@@ -15,26 +15,23 @@ exports.signup = async (req, res) => {
             business_name
         } = req.body
 
-        const {uid, displayName, email: fbEmail, photoURL} = await createUser({
+        const response = await createUser({
             email,
             password,
-            name: `${firstname} ${lastname}`
+            firstname,
+            lastname
         })
 
-        await findOrCreate(uid, {
-            name: displayName,
-            email: fbEmail,
-            photo_url: photoURL,
+        const user = await findOrCreate(response.uid, {
+            name: response.displayName,
+            email: response.email,
+            photo_url: response.photoURL,
             business_name
         })
 
-        const accessToken = signAccessToken({uid})
-        const refreshToken = signRefreshToken({uid})
-
-        sendCookie(res, refreshToken)
-
         res.json({
-            token: accessToken
+            firebase: response,
+            user
         })
 
     } catch (error) {
@@ -55,12 +52,6 @@ exports.signin = async (req, res) => {
             email: response.email,
             photo_url: response.photoURL
         })
-
-        //await getAuth().setCustomUserClaims(response.uid, {user_role: user.role})
-        // const accessToken = signAccessToken({uid})
-        // const refreshToken = signRefreshToken({uid})
-
-        // sendCookie(res, refreshToken)
 
         res.json({
             firebase: response,

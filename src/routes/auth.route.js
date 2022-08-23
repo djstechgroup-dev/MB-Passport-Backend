@@ -6,9 +6,9 @@ const {isAuthenticated, firebaseAuth} = require('./../middleware/isAuthenticated
 
 router.post('/signup', signup)
 router.post('/signin', firebaseAuth, signin)
-router.post('/signin_mobile', signInMobile)
-router.post('/signout', signOut)
+router.post('/signin_mobile', firebaseAuth, signInMobile)
+router.post('/signout', firebaseAuth, signOut)
 router.get('/user', firebaseAuth, getAuthUser)
-router.post('/refresh', refreshToken)
+router.post('/refresh',  refreshToken)
 
 module.exports = router
