@@ -1,16 +1,14 @@
 const mongoose = require("mongoose");
 
+
 const businessSchema = mongoose.Schema({
   businessName: {
     type: String,
     default: 'Business',
     required: true,
   },
-  imageURL: {
-    type: String,
-    default: 'http://imageUrl.com',
-    required: true
-  },
+  imageUrl: String,
+  imagePath: String,
   category: {
     // type: mongoose.SchemaTypes.ObjectId,
     // ref: 'categories'

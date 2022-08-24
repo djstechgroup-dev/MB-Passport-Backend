@@ -1,5 +1,5 @@
 const Business = require('../models/business')
-const User = require('./../models/user')
+const authUser = require('../utils/authUser')
 
 exports.create = async (req, res) => {
 
@@ -10,12 +10,12 @@ exports.create = async (req, res) => {
         description, 
         openingTime,
         closingTime,
-        webSiteUrl
+        webSiteUrl,
+        imageUrl,
+        imagePath
     } =  req.body
 
-        const {uid} = req.user
-
-        const user = await User.findOne({user_id: uid})
+        const user = await authUser(req)
 
         try {
             const newBusiness = Business.create({
@@ -26,6 +26,8 @@ exports.create = async (req, res) => {
                 openingTime, 
                 closingTime,
                 webSiteUrl,
+                imageUrl,
+                imagePath,
                 owner: user._id
             })
             

@@ -4,6 +4,7 @@ const {createUser} = require('./../services/firebase.service')
 const {findOrCreate} = require('./../services/user.service')
 const {signAccessToken, signRefreshToken, verifyRefreshToken} = require('./../services/jwt.service')
 const { deleteCookie } = require('../utils/responseCookie')
+const authUser = require('../utils/authUser')
 
 exports.signup = async (req, res) => {
     try {
@@ -59,7 +60,6 @@ exports.signin = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error)
         res.status(401).json({
             error
         })
@@ -103,9 +103,9 @@ exports.signOut = (req, res) => {
 
 exports.getAuthUser = async (req, res) => {
     try {
-        const {uid, email} = req.user
 
-        const user = await User.findOne({user_id: uid, email})
+        const user = await authUser(req)
+
         res.json({
             user
         })
