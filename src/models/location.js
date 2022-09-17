@@ -13,26 +13,26 @@ const LocationSchema = mongoose.Schema({
         type: Object,
         default: () => ({
             hours: new Date().getHours(),
-            minutes: new Date().getMinutes()
+            minutes: new Date().getMinutes(),
+            seconds: new Date().getSeconds()
         })
     },
     closingTime: {
         type: Object,
         default: () => ({
             hours: new Date().getHours(),
-            minutes: new Date().getMinutes()
+            minutes: new Date().getMinutes(),
+            seconds: new Date().getSeconds()
         })
-    }
-    ,
-    placeholder: String,
-    imageUrl: {
-        type: String,
-        default: 'http://localhost'
     },
-    useBusinessPhoto: {
-        type: Boolean,
-        default: false
-    }
+    deals: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Deal'
+    }],
+    placeholder: String,
+    imageUrl: String,
+    imagePath: String,
+    useBusinessPhoto: Boolean
 
 })
 

@@ -1,36 +1,37 @@
 const mongoose = require("mongoose");
 
-const UserScheme = mongoose.Schema({
+const MobileUserScheme = mongoose.Schema({
+  user_id: {
+    type: String,
+    unique: true,
+    required: true
+  },
   email: {
     type: String,
     required: true,
     unique: true
   },
   name: {
-    type: String,
-    required: true
+    type: String
   },
-  photoURL: String,
-  favouriteBusiness: {
-    type: String,
-    default: '',
-  },
-  offerRedeemed: {
-    type: String,
-    default: '',
-  },
-  savedDeals: {
-    type: String,
-    default: '',
-  },
+  photo_url: String,
+  phone: String,
+  favouriteBusiness: [{
+    type: mongoose.Types.ObjectId,
+    ref: 'Business'
+  }],
+  offerRedeemed: [{
+    type: mongoose.Types.ObjectId,
+    ref: 'Deal'
+  }],
+  savedDeals: [{
+    type: mongoose.Types.ObjectId,
+    ref: 'Deal'
+  }],
   savingsEarned: {
-    type: String,
-    default: '',
-  },
-  date: {
-    type: Date,
-    default: () => Date.now()
+    type: Number,
+    default: 0
   }
 });
 
-module.exports = mongoose.model("MobileUser", UserScheme);
+module.exports = mongoose.model("MobileUser", MobileUserScheme);

@@ -1,13 +1,14 @@
 const {getAuth} = require('firebase-admin/auth')
 const User = require('./../models/user')
 const {createUser} = require('./../services/firebase.service')
-const {findOrCreate} = require('./../services/user.service')
-const {signAccessToken, signRefreshToken, verifyRefreshToken} = require('./../services/jwt.service')
+const {findOrCreate, findOrCreateMobileUser} = require('./../services/user.service')
+const {signAccessToken, verifyRefreshToken} = require('./../services/jwt.service')
 const { deleteCookie } = require('../utils/responseCookie')
 const authUser = require('../utils/authUser')
 
 exports.signup = async (req, res) => {
     try {
+
         const {
             firstname,
             lastname,
@@ -16,12 +17,12 @@ exports.signup = async (req, res) => {
             business_name
         } = req.body
 
-        const response = await createUser({
-            email,
-            password,
-            firstname,
-            lastname
-        })
+        // const response = await createUser({
+        //     email,
+        //     password,
+        //     firstname,
+        //     lastname
+        // })
 
         const user = await findOrCreate(response.uid, {
             name: response.displayName,
@@ -43,7 +44,7 @@ exports.signup = async (req, res) => {
 
 exports.signin = async (req, res) => {
 
-    const {email} = req.body
+    const {email} = req.user
 
     try {
         const response = await getAuth().getUserByEmail(email)
@@ -71,23 +72,21 @@ exports.signInMobile = async (req, res) => {
     const {email} = req.body
 
     try {
-        const {uid, email: fbEmail, displayName, photoURL} = await getAuth().getUserByEmail(email)
+        const response = await getAuth().getUserByEmail(email)
 
-        await findOrCreate(uid, {
-            name: displayName,
-            email: fbEmail,
-            photo_url: photoURL,
-            role: 2
+        const user = await findOrCreateMobileUser(uid, {
+            name: response.displayName,
+            email: response.email,
+            photo_url: response.photoURL,
+            phone: response.phoneNumber
         })
 
-        const token = signRefreshToken({uid})
-
         res.json({
-            token
+            user
         })
 
     } catch (error) {
-        res.status(402).json({
+        res.status(401).json({
             error
         })
     }

@@ -4,26 +4,12 @@ const Business = require('../models/business')
 exports.addLocation = async (req, res) => {
 
     const {
-        businessId,
-        name,
-        address,
-        info,
-        openingTime,
-        closingTime,
-        placeholder
+        businessId
     } =  req.body
 
     try {
 
-        const location = await Location.create({
-            businessId,
-            name,
-            address,
-            info,
-            openingTime,
-            closingTime,
-            placeholder
-        })
+        const location = await Location.create(req.body)
         
         const business = await Business.findById(businessId)
 
@@ -33,10 +19,13 @@ exports.addLocation = async (req, res) => {
         }
 
         res.send({
-            data: location
+            success: true,
+            location,
+            business
         })   
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             error
         })
@@ -44,11 +33,11 @@ exports.addLocation = async (req, res) => {
 
 }
 
-exports.getAll = async (req, res) => {
+exports.getAllLocations = async (req, res) => {
    try {
-    const data = await Deal.find()
+    const locations = await Location.find()
     res.json({
-        data
+        locations
     })
    } catch (error) {
     res.status(500).json({
@@ -57,15 +46,15 @@ exports.getAll = async (req, res) => {
    }
 }
 
-exports.getById = async (req, res) => {
+exports.getLocationById = async (req, res) => {
 
     const id = req.params.id
 
     try {
-        const data = await Deal.findById(id)
+        const location = await Location.findById(id)
 
         res.json({
-            data
+            location
         })
     } catch (error) {
         res.status(500).json({
@@ -74,20 +63,60 @@ exports.getById = async (req, res) => {
     }
 }
 
-exports.updateDeal = async (req, res) => {
+exports.getLocationByBusiness = async (req, res) => {
+
+    const id = req.params.id
+
+    try {
+        const locations = await Location.find({businessId: id})
+
+        res.json({
+            locations
+        })
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
+}
+
+exports.updateLocation = async (req, res) => {
 
     const id = req.params.id
     const payload = req.body
 
     try {
-
-        const data = await Deal.updateOne({ _id: id }, { $set: payload })
+        const location = await Location.updateOne({ _id: id }, { $set: payload })
 
         res.json({
             success: true,
-            data
+            location
         })
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
+}
 
+exports.deleteLocation = async (req, res) => {
+
+    const id = req.params.id
+
+    try {
+
+        const location = await Location.findById(id)
+
+        await Business.updateOne(
+            {_id: location.businessId},
+            {$pull: {locations: location._id}}
+        )
+        const deleted = await Location.deleteOne({_id: id})
+
+        res.json({
+            success: true,
+            deleted
+        })
     } catch (error) {
         res.status(500).json({
             error

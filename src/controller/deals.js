@@ -1,51 +1,49 @@
 const Deal = require('../models/deal')
+const Location = require('../models/location')
+const Business = require('../models/business')
 
 exports.create = async (req, res) => {
 
-    const {
-    business_id,
-    tagline,
-    locations,
-    active_from,
-    active_to,
-    no_offers,
-    est_saving,
-    kpi,
-    PhotoURL
-    } =  req.body
+    const data =  req.body
 
-        try {
-            const deal = new Deal({
-                business_id,
-                tagline,
-                locations,
-                active_from,
-                active_to,
-                no_offers,
-                est_saving,
-                kpi,
-                PhotoURL
-            })
-            
-            await deal.save()
-            
-            res.send({
-                data: deal
-            })   
+    try {
 
-        } catch (error) {
-            res.status(500).json({
-                error
-            })
+        const {date_range, ...rest} = data
+
+        const deal = await Deal.create({
+            active_from: date_range[0],
+            active_to: date_range[1],
+            ...rest
+        })
+
+        data.locations.forEach(async (id) => {
+            const location = await Location.findById(id)
+            location.deals.push(deal._id)
+            await location.save()
+        })
+
+        const business = await Business.findById(data.businessId)
+
+        if(business) {
+            business.deals.push(deal._id)
+            await business.save()
         }
 
+        res.send({
+            deal
+        })   
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
 }
 
 exports.getAll = async (req, res) => {
    try {
-    const data = await Deal.find()
+    const deals = await Deal.find()
     res.json({
-        data
+        deals
     })
    } catch (error) {
     res.status(500).json({
@@ -59,10 +57,10 @@ exports.getById = async (req, res) => {
     const id = req.params.id
 
     try {
-        const data = await Deal.findById(id)
+        const deal = await Deal.findById(id)
 
         res.json({
-            data
+            deal
         })
     } catch (error) {
         res.status(500).json({
@@ -78,13 +76,105 @@ exports.updateDeal = async (req, res) => {
 
     try {
 
-        const data = await Deal.updateOne({ _id: id }, { $set: payload })
+        const deal = await Deal.findById(id)
+
+        await Location.updateMany(
+            {_id: {$in: deal.locations}},
+            {$pull: {deals: deal._id}},
+            {multiple: true}
+        )
+
+        const updatedDeal = await Deal.updateOne({ _id: id }, { $set: payload })
+
+         payload.locations.forEach(async (id) => {
+            const location = await Location.findById(id)
+            location.deals.push(deal._id)
+            await location.save()
+        })
 
         res.json({
             success: true,
-            data
+            deal: updatedDeal
         })
 
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
+}
+
+exports.deleteDeal = async (req, res) => {
+
+    const id = req.params.id
+
+    try {
+
+        const deal = await Deal.findById(id)
+
+        await Location.updateMany(
+            {_id: {$in: deal.locations}},
+            {$pull: {deals: deal._id}},
+            {multiple: true}
+        )
+
+        await Deal.deleteOne({_id: id})
+
+        res.json({
+            success: true,
+            deal
+        })
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
+}
+
+exports.getDealsByBusiness = async (req, res) => {
+
+    const id = req.params.id
+
+    try {
+        const deals = await Deal.find({businessId: id})
+
+        res.json({
+            deals
+        })
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
+}
+
+exports.pauseDeal = async (req, res) => {
+
+    const id = req.params.id
+
+    try {
+        const deal = await Deal.updateOne({ _id: id }, { $set: {active: false} })
+
+        res.json({
+            deal
+        })
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
+}
+
+exports.startDeal = async (req, res) => {
+
+    const id = req.params.id
+
+    try {
+        const deal = await Deal.updateOne({ _id: id }, { $set: {active: true} })
+
+        res.json({
+            deal
+        })
     } catch (error) {
         res.status(500).json({
             error

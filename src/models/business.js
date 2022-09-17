@@ -7,13 +7,13 @@ const businessSchema = mongoose.Schema({
     default: 'Business',
     required: true,
   },
+  businessCode: {
+    type: String,
+    default: '000000'
+  },
   imageUrl: String,
   imagePath: String,
-  category: {
-    // type: mongoose.SchemaTypes.ObjectId,
-    // ref: 'categories'
-    type: String
-  },
+  category: String,
   address: {
     type: String,
     default: 'address'
@@ -26,14 +26,16 @@ const businessSchema = mongoose.Schema({
     type: Object,
     default: () => ({
       hours: new Date().getHours(),
-      minutes: new Date().getMinutes()
+      minutes: new Date().getMinutes(),
+      seconds: new Date().getSeconds()
     })
   },
   closingTime: {
     type: Object,
     default: () => ({
       hours: new Date().getHours(),
-      minutes: new Date().getMinutes()
+      minutes: new Date().getMinutes(),
+      seconds: new Date().getSeconds()
     })
   },
   webSiteUrl: {
@@ -50,6 +52,16 @@ const businessSchema = mongoose.Schema({
       ref: 'Location'
     }
   ],
+  deals: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Deal'
+    }
+  ],
+  active: {
+    type: Boolean,
+    default: 1
+  },
   date_created: {
     type: Date,
     default: () => Date.now()

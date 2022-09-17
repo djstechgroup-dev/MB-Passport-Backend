@@ -1,24 +1,21 @@
 const express = require('express')
 const router = express.Router()
-const {isAuthenticated, firebaseAuth} = require('./../middleware/isAuthenticated.middleware')
+const {firebaseAuth} = require('./../middleware/isAuthenticated.middleware')
 
 const {
     create, 
     getAll, 
     getById, 
-    updateBusiness
+    updateBusiness,
+    deleteBusiness
 } = require("../controller/business")
-
-const {
-    addLocation
-} = require("../controller/locations")
 
 router.use(firebaseAuth)
 
-router.post('/new', create)
-router.post('/add-location', addLocation)
-router.get('/all', getAll)
-router.get('/get/:id', getById)
-router.patch('/', updateBusiness)
+router.post('/', create)
+router.get('/', getAll)
+router.get('/:id', getById)
+router.patch('/:id', updateBusiness)
+router.delete('/:id', deleteBusiness)
 
 module.exports = router
