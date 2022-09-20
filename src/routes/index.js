@@ -10,11 +10,11 @@ const dealRoutes = require('./deal.route')
 const merchantRoutes = require('./merchant.route')
 const categoryRoutes = require('./category.route')
 
+router.use('/', userRoutes)
+
 router.use('/auth', authRoutes)
 
 router.use('/admin', adminRoutes)
-
-router.use('/user', userRoutes)
 
 router.use('/business', businessRoutes)
 router.use('/location', locationRoutes)

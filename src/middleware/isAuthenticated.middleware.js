@@ -12,8 +12,6 @@ exports.firebaseAuth = async (req, res, next) => {
 
         const decoded = await getAuth().verifyIdToken(token)
 
-        //const user = await User.findOne({user_id: uid, email})
-
         if(!decoded) throw new Error('Unauthorized')
 
         req.user = decoded
