@@ -74,7 +74,7 @@ exports.signInMobile = async (req, res) => {
     try {
         const response = await getAuth().getUserByEmail(email)
 
-        const user = await findOrCreateMobileUser(uid, {
+        const user = await findOrCreateMobileUser(response.uid, {
             name: response.displayName,
             email: response.email,
             photo_url: response.photoURL,
@@ -86,6 +86,7 @@ exports.signInMobile = async (req, res) => {
         })
 
     } catch (error) {
+        console.log('error - ', error)
         res.status(401).json({
             error
         })
