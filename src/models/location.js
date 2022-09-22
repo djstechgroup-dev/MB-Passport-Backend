@@ -12,18 +12,24 @@ const LocationSchema = mongoose.Schema({
     openingTime: {
         type: Object,
         default: () => ({
-            hours: new Date().getHours(),
-            minutes: new Date().getMinutes(),
-            seconds: new Date().getSeconds()
-        })
+            day: 'Monday',
+            time: {
+              hours: new Date().getHours(),
+              minutes: new Date().getMinutes(),
+              seconds: new Date().getSeconds()
+            }
+          })
     },
     closingTime: {
         type: Object,
         default: () => ({
-            hours: new Date().getHours(),
-            minutes: new Date().getMinutes(),
-            seconds: new Date().getSeconds()
-        })
+            day: 'Sunday',
+            time: {
+              hours: new Date().getHours(),
+              minutes: new Date().getMinutes(),
+              seconds: new Date().getSeconds()
+            }
+          })
     },
     deals: [{
         type: mongoose.Types.ObjectId,
