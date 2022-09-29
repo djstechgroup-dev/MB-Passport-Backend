@@ -8,7 +8,12 @@ const {
     getAllDeals,
     getAllBusiness,
     getDeal,
-    getBusiness
+    getBusiness,
+    favoriteBusiness,
+    removeFavoriteBusiness,
+    saveDeal,
+    removeSaveDeal,
+    getDealOfTheDay
 } = require("../controller/user")
 
 router.use(firebaseAuth)
@@ -42,6 +47,22 @@ router.get('/me', me)
  *         description: Unauthorized
  */
 router.get('/deals', getAllDeals)
+
+/**
+ * @swagger
+ * /api/dotd:
+ *   get:
+ *     summary: Get Deal of the day
+ *     tags: [Mobile App API]
+ *     responses:
+ *       200:
+ *         description: Deal of the Day
+ *       400:
+ *         description: deal can not be found
+ *       401:
+ *         description: Unauthorized
+ */
+ router.get('/dotd', getDealOfTheDay)
 
 /**
  * @swagger
@@ -110,6 +131,108 @@ router.get('/businesses', getAllBusiness)
  *         description: Unauthorized
  */
 router.get('/business/:id', getBusiness)
+
+
+/**
+ * @swagger
+ * /api/favorite-business/{id}:
+ *   patch:
+ *     summary: Mark as favorite the business
+ *     tags: [Mobile App API]
+ *     parameters:
+ *       - in : path
+ *         name: id
+ *         description: id of business
+ *         schema:
+ *           type: integer
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: business by its id
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: business can not be found
+ *       401:
+ *         description: Unauthorized
+ */
+ router.patch('/favorite-business/:id', favoriteBusiness)
+
+ /**
+ * @swagger
+ * /api/unfavorite-business/{id}:
+ *   patch:
+ *     summary: Remove business to favorite
+ *     tags: [Mobile App API]
+ *     parameters:
+ *       - in : path
+ *         name: id
+ *         description: id of business
+ *         schema:
+ *           type: integer
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: business by its id
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: business can not be found
+ *       401:
+ *         description: Unauthorized
+ */
+router.patch('/remove-favorite-business/:id', removeFavoriteBusiness)
+
+
+ /**
+ * @swagger
+ * /api/save-deal/{id}:
+ *   patch:
+ *     summary: Save deal to the user collection
+ *     tags: [Mobile App API]
+ *     parameters:
+ *       - in : path
+ *         name: id
+ *         description: id of business
+ *         schema:
+ *           type: integer
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: business by its id
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: business can not be found
+ *       401:
+ *         description: Unauthorized
+ */
+router.patch('/save-deal/:id', saveDeal)
+
+   /**
+ * @swagger
+ * /api/remove-save-deal/{id}:
+ *   patch:
+ *     summary: Remove deal to the save deals collection
+ *     tags: [Mobile App API]
+ *     parameters:
+ *       - in : path
+ *         name: id
+ *         description: id of business
+ *         schema:
+ *           type: integer
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: business by its id
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: business can not be found
+ *       401:
+ *         description: Unauthorized
+ */
+router.patch('/remove-save-deal/:id', removeSaveDeal)
 
 
 module.exports = router

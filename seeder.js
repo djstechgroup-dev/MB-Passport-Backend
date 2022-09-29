@@ -1,9 +1,12 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
+const Category = require('./src/models/category')
 const User = require('./src/models/user')
+const MobileUser = require('./src/models/mobile_user')
 const Business = require('./src/models/business')
 const Location = require('./src/models/location')
 const Deal = require('./src/models/deal')
+const Setting = require('./src/models/setting')
 
 const firebase = require('firebase-admin')
 const {getAuth} = require('firebase-admin/auth')
@@ -14,6 +17,33 @@ firebase.initializeApp({
 })
 
 const mongoString = process.env?.DATABASE_URL || 'mongodb://localhost:27017/local_db'
+
+const categories = [
+    {name: 'Attractions'},
+    {name: 'Beach'},
+    {name: 'Events'},
+    {name: 'Family Fun'},
+    {name: 'Fishing'},
+    {name: 'Golf'},
+    {name: 'Lodging'},
+    {name: 'Shopping'},
+    {name: 'Shows'},
+    {name: 'Transportation'},
+    {name: 'Watersport'},
+    {name: 'Wellness'},
+    {name: 'Breakfast'},
+    {name: 'Brewpub'},
+    {name: 'Buffet'},
+    {name: 'Burgers & Wings'},
+    {name: 'Delivery'},
+    {name: 'Family Dining'},
+    {name: 'Fine Dining'},
+    {name: 'Oceanfront'},
+    {name: 'Pizza'},
+    {name: 'Seafood'},
+    {name: 'Sportsbar'},
+    {name: 'Steakhouse'},
+]
 
 const users = [
     {
@@ -27,6 +57,10 @@ const users = [
         password: 'password123'
     }
 ]
+
+const createCategories = async () => {
+    await Category.insertMany(categories)
+}
 
 const createUser = async () => {
 
@@ -121,7 +155,6 @@ const createBusiness = async () => {
 
         for(const business of businessResults) {
 
-
             const locationData = {
                 businessId: business._id,
                 name: `Location ${business.businessName}`,
@@ -197,20 +230,40 @@ const createBusiness = async () => {
     }
 }
 
+const loadSetting = async () => {
+    try {
+        const deals = await Deal.find({})
 
+        const setting = Setting.create({
+            dealOfTheDay: deals[4]._id
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 const runSeeder = async () => {
     //wipe all data
+    await Category.deleteMany({})
     await User.deleteMany({})
+    await MobileUser.deleteMany({})
     await Business.deleteMany({})
     await Location.deleteMany({})
     await Deal.deleteMany({})
+    await Setting.deleteMany({})
+
+    //insert categories
+    await createCategories()
 
     //insert users
     await createUser()
 
     //insert businesses
     await createBusiness()
+
+    //create setting
+    await loadSetting()
+
 }
 
 mongoose.connect(mongoString, { useNewUrlParser: true})

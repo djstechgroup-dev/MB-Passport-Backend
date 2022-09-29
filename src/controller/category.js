@@ -1,26 +1,53 @@
-
+const Category = require('./../models/category')
 const data = [
-    'Automotive',
-    'Business Support & Supplies',
-    'Computers & Electronics',
-    'Construction & Contractors',
-    'Education',
-    'Entertainment',
-    'Food & Dining',
-    'Health & Medicine',
-    'Home & Garden',
-    'Legal & Financial',
-    "Manufacturing, Wholesale, Distribution",
-    'Merchants (Retail)',
-    'Miscellaneous',
-    'Personal Care & Services',
-    'Real Estate'
+    'Attractions',
+    'Beach',
+    'Events',
+    'Family Fun',
+    'Fishing',
+    'Golf',
+    'Lodging',
+    'Shopping',
+    'Shows',
+    'Transportation',
+    "Watersport",
+    'Wellness',
+    'Breakfast',
+    'Brewpub',
+    'Buffet',
+    'Burgers & Wings',
+    'Delivery',
+    'Family Dining',
+    'Fine Dining',
+    'Oceanfront',
+    'Pizza',
+    'Seafood',
+    'Sportsbar',
+    'Steakhouse',
 ]
+
+exports.addCategory = async (req, res) => {
+
+    const {category} = req.body
+
+    try {
+        const data = await Category.create({name: category})
+
+        res.json({
+            data
+        })        
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            error
+        })
+    }
+}
 
 exports.getCategories = async (req, res) => {
 
     try {
-        const categories = data
+        const categories = await Category.find({})
 
         res.json({
             categories
@@ -38,11 +65,52 @@ exports.getCategory = async (req, res) => {
     const {id} = req.params
 
     try { 
-        const categories = data
+        const category = await Category.findById(id)
 
         res.json({
-            category: categories[id]
+            category
         })        
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            error
+        })
+    }
+}
+
+exports.updateCategory = async (req, res) => {
+
+    const {id} = req.params
+    const {category} = req.body
+
+    try { 
+        const data = await Category.findOneAndUpdate({ _id: id }, {name: category}, {
+            new: true
+        })
+
+        res.json({
+            success: true,
+            data
+        })      
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            error
+        })
+    }
+}
+
+exports.deleteCategory = async (req, res) => {
+
+    const {id} = req.params
+
+    try { 
+        const data = await Category.deleteOne({_id: id})
+
+        res.json({
+            success: true,
+            data
+        })      
     } catch (error) {
         console.log(error)
         res.status(500).json({

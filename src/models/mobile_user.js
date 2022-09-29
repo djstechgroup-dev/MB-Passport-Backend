@@ -11,9 +11,7 @@ const MobileUserScheme = mongoose.Schema({
     required: true,
     unique: true
   },
-  name: {
-    type: String
-  },
+  name: String,
   photo_url: String,
   phone: String,
   favouriteBusiness: [{
