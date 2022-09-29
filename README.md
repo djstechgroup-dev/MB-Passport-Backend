@@ -1,65 +1,40 @@
-# MEVN Stack Authentication Template
+# MYRTLE BEACH PASSPORT
 
-![MEVN Logo](/client/src/assets/MEVN.png)
+#### _RESTful API SERVER_
 
-## Clone or download, Ready to use.
+This is the backend of the myrtle beach passport app
 
-To use the MEVN Authentication Template you need your own DataBase.
-Create your Database in no time using <a href="https://docs.atlas.mongodb.com/getting-started/">MongoDB Atlas - the global cloud database</a>
+## Requirements
 
-- Once you have Created DataBase
-  - Go to the Cluster Created > Below SANDBOX click on Connect Button > Select Connect your Application
-  - Copy Link, Example (mongodb+srv://<username>:<password>@mevnstack-myne9.mongodb.net/<dbname>?retryWrites=true&w=majority)
-  - Go to Clone or Downloaded Folder, Find config folder > default.json
-  - In default.json, Paste the Copied link (i.e. "mongoURI" : "CopiedLink" )
-  - In Terminal, > npm run dev
+- Node v14.19.1+
+- MongoDB
+- Firebase v9
 
-#### You made it !!! Happy Coding.
+## Features
 
-## Project setup
+- Admin/Merchant
+- JWT Authentication
 
-### Backend Setup
+## Tech Stack
 
-```
-npm install express bcryptjs jsonwebtoken config express-validator mongoose nodemon concurrently cors
-```
+This project uses a number of open source projects to work properly:
 
-### Run Backend Server
+- Express JS
+- MongoDB
+- Firebase
+- Swagger
 
-```
-npm run server
-```
+## Installation
 
-### Create Vue Project
+Rename .env.sample to .env.
+Edit environment variables
 
-```
-vue create project-name
-```
+Install the dependencies and devDependencies and start the server.
+`npm install` or `yarn`
 
-### Compiles and hot-reloads for development (Run Vue)
+## Available Scripts
 
-```
-npm run serve
-```
+In the project directory, you can run:
 
-### Run Backend(http://localhost:5000) + FrontEnd(http://localhost:8080)
-
-```
-npm run dev
-```
-
-### Run your tests
-
-```
-npm run test
-```
-
-### Lints and fixes files
-
-```
-npm run lint
-```
-
-## Project Specifications
-
-- Building a MEVN Stack Authentication Template, i.e Ready to use for all.
+`npm run db:seed` to seed database
+`npm run start` to start the project
