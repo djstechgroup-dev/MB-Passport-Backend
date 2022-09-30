@@ -1,6 +1,5 @@
 const {getAuth} = require('firebase-admin/auth')
 const User = require('./../models/user')
-const {createUser} = require('./../services/firebase.service')
 const {findOrCreate, findOrCreateMobileUser} = require('./../services/user.service')
 const {signAccessToken, verifyRefreshToken} = require('./../services/jwt.service')
 const { deleteCookie } = require('../utils/responseCookie')
@@ -104,7 +103,13 @@ exports.signOut = (req, res) => {
 exports.getAuthUser = async (req, res) => {
     try {
 
-        const user = await authUser(req)
+        const firebaseUser = req.user
+
+        const user = await findOrCreate(firebaseUser.uid, {
+            name: firebaseUser.name,
+            email: firebaseUser.email,
+            photo_url: firebaseUser.picture
+        })
 
         res.json({
             user

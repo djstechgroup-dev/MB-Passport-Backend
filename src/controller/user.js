@@ -1,3 +1,4 @@
+const { findOrCreateMobileUser } = require('../services/user.service')
 const Business = require('./../models/business')
 const Deal = require('./../models/deal')
 const MobileUser = require('./../models/mobile_user')
@@ -7,8 +8,14 @@ const authMobileUser = require('./../utils/authMobileUser')
 
 exports.me = async (req, res) => {
     try {
-        const data = await authMobileUser(req)
-        res.json({data})
+        const firebaseUser = req.user
+
+        const user = await findOrCreateMobileUser(firebaseUser.uid, {
+            name: firebaseUser.name,
+            email: firebaseUser.email,
+            photo_url: firebaseUser.picture
+        })
+        res.json({user})
     } catch (error) {
         console.log(error)
         res.status(500).json({
@@ -107,10 +114,13 @@ exports.favoriteBusiness = async (req, res) => {
 
         const authUser = await authMobileUser(req)
 
-        const user = await MobileUser.updateOne(
-            {_id: authUser._id},
-            {$push: {favoriteBusiness: id}}
-        )
+        const user = await MobileUser.findById(authUser._id)
+
+        console.log(user)
+        
+        //user.favoriteBusiness.push(id)
+
+        await user.save()
 
         res.json({
             success: true,
@@ -118,6 +128,7 @@ exports.favoriteBusiness = async (req, res) => {
         })
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             error
         })

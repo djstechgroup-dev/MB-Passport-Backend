@@ -1,4 +1,5 @@
 require('dotenv').config()
+require('./src/services/firebase.service')
 const http = require('http')
 const express = require("express")
 const morgan = require("morgan")

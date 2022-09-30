@@ -193,7 +193,7 @@ router.patch('/remove-favorite-business/:id', removeFavoriteBusiness)
  *     parameters:
  *       - in : path
  *         name: id
- *         description: id of business
+ *         description: deal ID
  *         schema:
  *           type: integer
  *         required: true
@@ -218,7 +218,7 @@ router.patch('/save-deal/:id', saveDeal)
  *     parameters:
  *       - in : path
  *         name: id
- *         description: id of business
+ *         description: deal ID
  *         schema:
  *           type: integer
  *         required: true
