@@ -114,13 +114,12 @@ exports.favoriteBusiness = async (req, res) => {
 
         const authUser = await authMobileUser(req)
 
+        await MobileUser.updateOne(
+            {_id: authUser._id},
+            {$push: {favouriteBusiness: id}}
+        )
+
         const user = await MobileUser.findById(authUser._id)
-
-        console.log(user)
-        
-        //user.favoriteBusiness.push(id)
-
-        await user.save()
 
         res.json({
             success: true,
@@ -144,10 +143,12 @@ exports.removeFavoriteBusiness = async (req, res) => {
 
         const authUser = await authMobileUser(req)
 
-        const user = await MobileUser.updateOne(
+        await MobileUser.updateOne(
             {_id: authUser._id},
-            {$pull: {favoriteBusiness: id}}
+            {$pull: {favouriteBusiness: id}}
         )
+
+        const user = await MobileUser.findById(authUser._id)
 
         res.json({
             success: true,
@@ -170,10 +171,12 @@ exports.saveDeal = async (req, res) => {
 
         const authUser = await authMobileUser(req)
 
-        const user = await MobileUser.updateOne(
+        await MobileUser.updateOne(
             {_id: authUser._id},
-            {$push: {saveDeals: id}}
+            {$push: {savedDeals: id}}
         )
+
+        const user = await MobileUser.findById(authUser._id)
 
         res.json({
             success: true,
@@ -195,10 +198,12 @@ exports.removeSaveDeal = async (req, res) => {
 
         const authUser = await authMobileUser(req)
 
-        const user = await MobileUser.updateOne(
+        await MobileUser.updateOne(
             {_id: authUser._id},
-            {$pull: {saveDeals: id}}
+            {$pull: {savedDeals: id}}
         )
+
+        const user = await MobileUser.findById(authUser._id)
 
         res.json({
             success: true,
