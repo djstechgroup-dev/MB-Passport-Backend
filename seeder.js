@@ -111,7 +111,7 @@ const createBusiness = async () => {
         const businesses = [
             {
                 businessName: 'User 1 Business 1',
-                category: 'Entertainment', 
+                category: 'Beach', 
                 address: 'Business 1 address', 
                 description: 'Business 1 description', 
                 webSiteUrl: 'business1.com',
@@ -121,7 +121,7 @@ const createBusiness = async () => {
             },
             {
                 businessName: 'User 1 Business 2',
-                category: 'Entertainment', 
+                category: 'Shopping', 
                 address: 'Business 2 address', 
                 description: 'Business 2 description', 
                 webSiteUrl: 'business2.com',
@@ -131,7 +131,7 @@ const createBusiness = async () => {
             },
             {
                 businessName: 'User 2 Business 1',
-                category: 'Entertainment', 
+                category: 'Burgers & Wings', 
                 address: 'Santa Barbara MT 88317', 
                 description: 'User 2 Business 1 description', 
                 webSiteUrl: 'business22.com',
@@ -141,7 +141,7 @@ const createBusiness = async () => {
             },
             {
                 businessName: 'User 2 Business 2',
-                category: 'Entertainment', 
+                category: 'Pizza', 
                 address: 'Yorba Linda South Carolina 28423', 
                 description: 'User 2 Business 2 description', 
                 webSiteUrl: 'businessuser2.com',
