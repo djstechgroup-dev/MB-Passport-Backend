@@ -13,10 +13,12 @@ const {
     removeFavoriteBusiness,
     saveDeal,
     removeSaveDeal,
-    getDealOfTheDay
+    getDealOfTheDay,
+    getUser
 } = require("../controller/user")
+const { Router } = require('express')
 
-router.use(firebaseAuth)
+// router.use(firebaseAuth)
 
 /**
  * @swagger
@@ -29,7 +31,7 @@ router.use(firebaseAuth)
  *         description: Mobile_User
  */
 
-router.get('/me', me)
+router.get('/me', firebaseAuth, me)
 
 
 /**
@@ -46,7 +48,7 @@ router.get('/me', me)
  *       401:
  *         description: Unauthorized
  */
-router.get('/deals', getAllDeals)
+router.get('/deals', firebaseAuth, getAllDeals)
 
 /**
  * @swagger
@@ -62,7 +64,7 @@ router.get('/deals', getAllDeals)
  *       401:
  *         description: Unauthorized
  */
- router.get('/dotd', getDealOfTheDay)
+ router.get('/dotd', firebaseAuth, getDealOfTheDay)
 
 /**
  * @swagger
@@ -87,7 +89,7 @@ router.get('/deals', getAllDeals)
  *       401:
  *          description: Unauthorized
  */
-router.get('/deal/:id', getDeal)
+router.get('/deal/:id', firebaseAuth, getDeal)
 
 
 /**
@@ -104,7 +106,7 @@ router.get('/deal/:id', getDeal)
  *       401:
  *         description: Unauthorized
  */
-router.get('/businesses', getAllBusiness)
+router.get('/businesses', firebaseAuth, getAllBusiness)
 
 
 /**
@@ -130,7 +132,7 @@ router.get('/businesses', getAllBusiness)
  *       401:
  *         description: Unauthorized
  */
-router.get('/business/:id', getBusiness)
+router.get('/business/:id', firebaseAuth, getBusiness)
 
 
 /**
@@ -156,7 +158,7 @@ router.get('/business/:id', getBusiness)
  *       401:
  *         description: Unauthorized
  */
- router.patch('/favorite-business/:id', favoriteBusiness)
+ router.patch('/favorite-business/:id', firebaseAuth, favoriteBusiness)
 
  /**
  * @swagger
@@ -181,7 +183,7 @@ router.get('/business/:id', getBusiness)
  *       401:
  *         description: Unauthorized
  */
-router.patch('/remove-favorite-business/:id', removeFavoriteBusiness)
+router.patch('/remove-favorite-business/:id', firebaseAuth, removeFavoriteBusiness)
 
 
  /**
@@ -207,7 +209,7 @@ router.patch('/remove-favorite-business/:id', removeFavoriteBusiness)
  *       401:
  *         description: Unauthorized
  */
-router.patch('/save-deal/:id', saveDeal)
+router.patch('/save-deal/:id', firebaseAuth, saveDeal)
 
    /**
  * @swagger
@@ -232,7 +234,7 @@ router.patch('/save-deal/:id', saveDeal)
  *       401:
  *         description: Unauthorized
  */
-router.patch('/remove-save-deal/:id', removeSaveDeal)
+router.patch('/remove-save-deal/:id', firebaseAuth, removeSaveDeal)
 
 
 module.exports = router

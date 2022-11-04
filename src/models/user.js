@@ -28,6 +28,9 @@ const UserScheme = mongoose.Schema({
   savingsEarned: {
     type: String
   },
+  phone_number: {
+    type: String
+  },
   business_name: {
     type: String
   },

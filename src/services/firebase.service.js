@@ -14,7 +14,8 @@ exports.createUser = async payload => {
             displayName: payload.firstname + ' ' + payload.lastname,
             photoURL: `https://www.gravatar.com/avatar?d=mp`,
             emailVerified: false,
-            disabled: false
+            disabled: false,
+            phoneNumber: payload.phoneNumber
         })
 
         return user        

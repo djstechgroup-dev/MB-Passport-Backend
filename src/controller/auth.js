@@ -4,35 +4,39 @@ const {findOrCreate, findOrCreateMobileUser} = require('./../services/user.servi
 const {signAccessToken, verifyRefreshToken} = require('./../services/jwt.service')
 const { deleteCookie } = require('../utils/responseCookie')
 const authUser = require('../utils/authUser')
+const firebase = require('firebase-admin')
 
 exports.signup = async (req, res) => {
     try {
-
         const {
             firstname,
             lastname,
             email,
             password,
-            business_name
+            businessName,
+            phoneNumber
         } = req.body
 
-        // const response = await createUser({
-        //     email,
-        //     password,
-        //     firstname,
-        //     lastname
-        // })
+        const user = await firebase.auth().createUser({
+            email: email,
+            password: password,
+            displayName: firstname + ' ' + lastname,
+            photoURL: `https://www.gravatar.com/avatar?d=mp`,
+            emailVerified: false,
+            disabled: false,
+            phoneNumber: phoneNumber
+        })
 
-        const user = await findOrCreate(response.uid, {
-            name: response.displayName,
-            email: response.email,
-            photo_url: response.photoURL,
-            business_name
+        const mongoUser = await User.create({
+            user_id: user.uid,
+            name: user.displayName,
+            email: user.email,
+            business_name: businessName,
+            phone_number: phoneNumber
         })
 
         res.json({
-            firebase: response,
-            user
+            mongoUser
         })
 
     } catch (error) {
@@ -51,7 +55,8 @@ exports.signin = async (req, res) => {
         const user = await findOrCreate(response.uid, {
             name: response.displayName,
             email: response.email,
-            photo_url: response.photoURL
+            photo_url: response.photoURL,
+            phone_number: response.phoneNumber
         })
 
         res.json({
